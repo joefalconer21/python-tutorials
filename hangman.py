@@ -8,7 +8,7 @@ def game():
     chances = 10
 
     # program chooses a word at random
-    secret_word = words[random.randint(0, len(words) - 1)]
+    secret_word = random.choice(words)
     
     # store number of letters to solve
     letters_to_solve = len(secret_word)
@@ -36,13 +36,13 @@ def game():
         guess = raw_input("    Type in a letter: ").lower()
         
         # make sure it's a single letter
-        if len(guess) > 1:
+        if len(guess) != 1:
             print("""
-    Enter just one letter!
+    Enter one single letter!
             """)
-        elif len(guess) < 1:
+        elif not guess.isalpha():
             print("""
-    Enter at least one letter!
+    No numbers please!
             """)
         else:
             # for good guesses
