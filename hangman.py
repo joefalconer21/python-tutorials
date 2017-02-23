@@ -1,81 +1,102 @@
 import random
 
-# a list of random words
+# create a list of random words
 words = ["car", "train", "boat", "bicycle", "motorcycle"]
 
 def game():
     # user gets 10 chances
     chances = 10
 
-    # program chooses one of those words
-    rand_word = words[random.randint(0, len(words) - 1)]
+    # program chooses a word at random
+    secret_word = words[random.randint(0, len(words) - 1)]
     
-    # store the number of good letters needed to win
-    letters_needed = len(rand_word)
+    # store number of letters to solve
+    letters_to_solve = len(secret_word)
 
-    # create a place holder to add good letters
-    good_guesses = ""
-    for letter in rand_word:
-        good_guesses += "_"
+    # create a representation of the word with underscores
+    solved_word = ""
+    for letter in secret_word:
+        solved_word += "_"
     
-    # split good_guesses into an array
-    good_letters = list(good_guesses)          
+    # split that representation into an array
+    solved_letters = list(solved_word)          
 
     # format some starting space
     print("""
-    =============================== Let's start a new game =================================
+    ========================== Try to guess my word! ============================
     """)
 
-    # the program asks us for letters
-    while chances and letters_needed:
+    # the game ends in the event of success or failure
+    while chances and letters_to_solve:
         
-        # show the word so far
-        print("    The word: " + good_guesses)
-
-        letter = raw_input("    Type in a letter: ").lower()
-        if len(letter) > 1:
+        # show the representation of the word
+        print("    The word: " + solved_word)
+        
+        # get a letter from the user
+        guess = raw_input("    Type in a letter: ").lower()
+        
+        # make sure it's a single letter
+        if len(guess) > 1:
             print("""
-    Only one letter!
+    Enter just one letter!
+            """)
+        elif len(guess) < 1:
+            print("""
+    Enter at least one letter!
             """)
         else:
             # for good guesses
-            if letter in rand_word:
+            if guess in secret_word:
                 print("""
     {} is a good letter!
-                """.format(letter))
+                """.format(guess))
+
+                # create a new list to store positions
+                solved_letter_positions = []
             
-                letters_needed -= 1
+                # get the positions of correct letter
+                solved_letter_positions = [i for i, letter in enumerate(secret_word) if letter == guess]
                 
-                # get the position of correct letter
-                letter_position = rand_word.index(letter)
+                # add the good letter to solved_letters list in all correct positions
+                for position in solved_letter_positions:
+                    solved_letters[position] = guess
+                    letters_to_solve -= 1               
                 
-                # add the good letter to the array
-                good_letters[letter_position] = letter
-                good_guesses = "".join(good_letters)
+                # rebuild the representation to display
+                solved_word = "".join(solved_letters)
             
             # for bad guesses
             else:
                 chances -= 1
                 print("""
     {} is not in my word. You have {} chances left...
-                """.format(letter, chances))
+                """.format(guess, chances))
                        
     # display game ending
-    if not letters_needed:
-        print("    Well done! You guessed my word, which was {}.".format(rand_word))
+    if not letters_to_solve:
+        # remove the solved word from program        
+        words.remove(secret_word)
+        print("""
+    Well done! You guessed my word, which was {}.
+        """.format(secret_word))
     else:
-        print("    Unlucky. Try brushing up on your vocabulary!") 
+        print("""
+    Unlucky. Try brushing up on your vocabulary!
+        """) 
 
     # give the option of starting a new game
-    play_again = raw_input ("""
-    Do you want to play again? Y/n 
-    """)
-    if play_again.lower() == 'y':
-        game()
+    if words:
+        play_again = raw_input ("    Do you want to play again? Y/n ")
+        if play_again.lower() == 'y':
+            game()
+        else: 
+            print("""
+    ========================== Bye! ===========================
+            """)
     else: 
         print("""
-    =============================== Bye! ================================
+    ========================== You guessed all my words!  ===========================
         """)
-              
+                      
 game()  
 
